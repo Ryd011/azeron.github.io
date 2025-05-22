@@ -5,59 +5,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sərfəli və Güvənli Alış</title>
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        :root {
+            --primary-color: #00ff00;
+            --secondary-color: #006600;
+            --error-color: #ff3333;
+            --text-color: #ffffff;
+            --bg-dark: rgba(0, 0, 0, 0.8);
+            --bg-darker: rgba(0, 20, 30, 0.9);
+        }
         
-        body, html {
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+        
+        body, html {
             height: 100%;
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow-x: hidden;
+            color: var(--text-color);
         }
         
         body {
-            background-image: url('https://res.cloudinary.com/doff3lvyz/image/upload/v1747849523/retro-futuristic-80s-background-free-vector_l4bmq3.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: white;
+            background: url('https://res.cloudinary.com/doff3lvyz/image/upload/v1747849523/retro-futuristic-80s-background-free-vector_l4bmq3.jpg') center/cover fixed;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
         
+        /* Header Styles */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.7);
+            padding: 1rem 2rem;
+            background: var(--bg-dark);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         
-        .login-btn {
-            background: #00ff00;
-            color: black;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
+        .logo img {
+            height: 50px;
+            transition: transform 0.3s;
         }
         
-        .login-btn:hover {
-            background: #00cc00;
+        .logo img:hover {
             transform: scale(1.05);
         }
         
+        /* Auth Button Styles */
+        .auth-btn {
+            background: var(--primary-color);
+            color: #000;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        
+        .auth-btn:hover {
+            background: var(--secondary-color);
+            color: #fff;
+        }
+        
+        /* User Profile Styles */
         .user-profile {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 1rem;
         }
         
         .user-avatar {
@@ -65,88 +89,151 @@
             height: 40px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid #00ff00;
+            border: 2px solid var(--primary-color);
         }
         
-        /* Diğer stiller... */
-        
-        /* Şərh modalı */
-        .comment-modal {
-            display: none;
+        /* Modal Styles */
+        .modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
+            display: none;
             justify-content: center;
             align-items: center;
+            z-index: 1000;
         }
         
-        .comment-container {
-            background: rgba(0, 20, 30, 0.9);
-            padding: 30px;
+        .modal-content {
+            background: var(--bg-darker);
+            padding: 2rem;
             border-radius: 10px;
-            border: 2px solid #00ff00;
             width: 90%;
             max-width: 500px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
         }
         
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.5);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 5px var(--primary-color);
+        }
+        
+        .error-message {
+            color: var(--error-color);
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        /* Comment Styles */
         .comment-textarea {
             width: 100%;
-            height: 150px;
-            padding: 12px;
-            margin-bottom: 15px;
+            min-height: 150px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
             background: rgba(0, 0, 0, 0.5);
-            border: 1px solid #00ff00;
-            color: white;
-            border-radius: 5px;
-            resize: none;
-        }
-        
-        .comment-submit {
-            width: 100%;
-            padding: 12px;
-            background: #00aa00;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-        
-        .comment-submit:hover {
-            background: #00ff00;
+            color: var(--text-color);
+            resize: vertical;
         }
     </style>
 </head>
 <body>
-    <div class="header">
+    <header class="header">
         <div class="logo">
-            <img src="https://res.cloudinary.com/doff3lvyz/image/upload/v1747910426/oyunalislarilogo_bi0ehj.jpg" alt="Oyun Alışları" height="50">
+            <img src="https://res.cloudinary.com/doff3lvyz/image/upload/v1747910426/oyunalislarilogo_bi0ehj.jpg" alt="Oyun Alışları">
         </div>
         <div id="authButtonContainer">
-            <button class="login-btn" onclick="openAuthModal()">Giriş et</button>
+            <button class="auth-btn" id="authBtn">Giriş et</button>
         </div>
-    </div>
+    </header>
     
-    <!-- Ana içerik... -->
+    <main class="container">
+        <!-- Ana məzmun burada olacaq -->
+    </main>
     
     <!-- Şərh Modalı -->
-    <div class="comment-modal" id="commentModal">
-        <div class="comment-container">
-            <h3>Şərh yaz</h3>
+    <div class="modal" id="commentModal">
+        <div class="modal-content">
+            <h2>Şərh yaz</h2>
             <textarea class="comment-textarea" id="commentText" placeholder="Şərhinizi yazın..."></textarea>
-            <button class="comment-submit" onclick="submitComment()">Göndər</button>
+            <button class="auth-btn" id="submitCommentBtn">Göndər</button>
+            <p class="error-message" id="commentError"></p>
         </div>
     </div>
     
-    <!-- Auth Modal (önceki koddaki gibi) -->
-    
+    <!-- Auth Modal -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <div class="auth-tabs">
+                <button class="auth-btn active" data-tab="login">Daxil ol</button>
+                <button class="auth-btn" data-tab="register">Qeydiyyat</button>
+            </div>
+            
+            <!-- Giriş Formu -->
+            <form id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="loginEmail" class="form-label">Email</label>
+                    <input type="email" id="loginEmail" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword" class="form-label">Şifrə</label>
+                    <input type="password" id="loginPassword" class="form-input" required>
+                </div>
+                <button type="submit" class="auth-btn">Daxil ol</button>
+                <p class="error-message" id="loginError"></p>
+            </form>
+            
+            <!-- Qeydiyyat Formu -->
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="registerName" class="form-label">İstifadəçi adı</label>
+                    <input type="text" id="registerName" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail" class="form-label">Email</label>
+                    <input type="email" id="registerEmail" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword" class="form-label">Şifrə</label>
+                    <input type="password" id="registerPassword" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPasswordConfirm" class="form-label">Şifrə təsdiqi</label>
+                    <input type="password" id="registerPasswordConfirm" class="form-input" required>
+                </div>
+                <button type="submit" class="auth-btn">Qeydiyyat</button>
+                <p class="error-message" id="registerError"></p>
+            </form>
+        </div>
+    </div>
+
     <script>
-        // Firebase konfigürasyonu
+        // Firebase konfiqurasiyası
         const firebaseConfig = {
             apiKey: "AIzaSyD_9RS3tRz8m5JFcg-UZad7AKmgwPC_c50",
             authDomain: "oyunalislari.firebaseapp.com",
@@ -157,99 +244,171 @@
             measurementId: "G-E6BZKQ5N0Z"
         };
 
-        // Firebase'i başlat
+        // Firebase-i işə sal
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const database = firebase.database();
         
-        // Kullanıcı durumu
+        // DOM elementləri
+        const authBtn = document.getElementById('authBtn');
+        const authModal = document.getElementById('authModal');
+        const commentModal = document.getElementById('commentModal');
+        const authButtonContainer = document.getElementById('authButtonContainer');
+        
+        // Dəyişənlər
         let currentUser = null;
         let selectedGame = null;
         
-        // Auth durum değişikliklerini izle
-        auth.onAuthStateChanged((user) => {
-            currentUser = user;
-            updateAuthUI();
+        // İstifadəçi dəyişikliklərinə nəzarət
+        auth.onAuthStateChanged(handleAuthStateChange);
+        
+        // Hadisə dinləyiciləri
+        authBtn.addEventListener('click', openAuthModal);
+        document.getElementById('submitCommentBtn').addEventListener('click', submitComment);
+        
+        // Auth modal tab dəyişikliyi
+        document.querySelectorAll('[data-tab]').forEach(tab => {
+            tab.addEventListener('click', () => switchAuthTab(tab.dataset.tab));
         });
         
-        // Auth UI güncelleme
+        // Form submit hadisələri
+        document.getElementById('loginForm').addEventListener('submit', handleLogin);
+        document.getElementById('registerForm').addEventListener('submit', handleRegister);
+        
+        // Funksiyalar
+        function handleAuthStateChange(user) {
+            currentUser = user;
+            updateAuthUI();
+        }
+        
         function updateAuthUI() {
-            const authButtonContainer = document.getElementById('authButtonContainer');
-            
             if (currentUser) {
                 authButtonContainer.innerHTML = `
                     <div class="user-profile">
-                        <img src="https://res.cloudinary.com/doff3lvyz/image/upload/v1747910426/oyunalislarilogo_bi0ehj.jpg" class="user-avatar" alt="Profil">
+                        <img src="https://res.cloudinary.com/doff3lvyz/image/upload/v1747910426/oyunalislarilogo_bi0ehj.jpg" 
+                             class="user-avatar" 
+                             alt="${currentUser.displayName || 'İstifadəçi'}">
                         <span>${currentUser.displayName || currentUser.email}</span>
-                        <button class="login-btn" onclick="logout()">Çıxış</button>
+                        <button class="auth-btn" id="logoutBtn">Çıxış</button>
                     </div>
                 `;
+                document.getElementById('logoutBtn').addEventListener('click', logout);
             } else {
-                authButtonContainer.innerHTML = '<button class="login-btn" onclick="openAuthModal()">Giriş et</button>';
+                authButtonContainer.innerHTML = '<button class="auth-btn" id="authBtn">Giriş et</button>';
+                document.getElementById('authBtn').addEventListener('click', openAuthModal);
             }
         }
         
-        // Çıkış fonksiyonu
+        function openAuthModal() {
+            authModal.style.display = 'flex';
+        }
+        
+        function closeAuthModal() {
+            authModal.style.display = 'none';
+        }
+        
+        function switchAuthTab(tab) {
+            // ... (əvvəlki kimi)
+        }
+        
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorElement = document.getElementById('loginError');
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                closeAuthModal();
+            } catch (error) {
+                errorElement.textContent = getErrorMessage(error.code);
+            }
+        }
+        
+        async function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerPasswordConfirm').value;
+            const errorElement = document.getElementById('registerError');
+            
+            if (password !== confirmPassword) {
+                errorElement.textContent = 'Şifrələr uyğun gəlmir!';
+                return;
+            }
+            
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                await userCredential.user.updateProfile({ displayName: name });
+                closeAuthModal();
+            } catch (error) {
+                errorElement.textContent = getErrorMessage(error.code);
+            }
+        }
+        
         function logout() {
             auth.signOut();
         }
         
-        // Oyun kartlarına tıklama
-        document.querySelectorAll('.game-card').forEach(card => {
-            card.addEventListener('click', function() {
-                if (!currentUser) {
-                    openAuthModal();
-                    alert("Şərh yazmaq üçün giriş etməlisiniz!");
-                    return;
-                }
-                
-                selectedGame = this.querySelector('img').alt;
-                openCommentModal();
-            });
-        });
-        
-        // Şərh modalını aç
-        function openCommentModal() {
-            document.getElementById('commentModal').style.display = 'flex';
+        function getErrorMessage(errorCode) {
+            const messages = {
+                'auth/email-already-in-use': 'Bu email artıq istifadə olunub',
+                'auth/invalid-email': 'Yanlış email formatı',
+                'auth/weak-password': 'Şifrə çox zəifdir (minimum 6 simvol)',
+                'auth/user-not-found': 'İstifadəçi tapılmadı',
+                'auth/wrong-password': 'Yanlış şifrə',
+                'default': 'Xəta baş verdi, yenidən cəhd edin'
+            };
+            
+            return messages[errorCode] || messages['default'];
         }
         
-        // Şərh modalını kapat
+        function openCommentModal(game) {
+            if (!currentUser) {
+                openAuthModal();
+                alert("Şərh yazmaq üçün giriş etməlisiniz!");
+                return;
+            }
+            
+            selectedGame = game;
+            commentModal.style.display = 'flex';
+        }
+        
         function closeCommentModal() {
-            document.getElementById('commentModal').style.display = 'none';
+            commentModal.style.display = 'none';
             document.getElementById('commentText').value = '';
+            document.getElementById('commentError').textContent = '';
         }
         
-        // Şərh göndər
-        function submitComment() {
+        async function submitComment() {
             const commentText = document.getElementById('commentText').value.trim();
+            const errorElement = document.getElementById('commentError');
             
             if (!commentText) {
-                alert("Şərh boş ola bilməz!");
+                errorElement.textContent = 'Şərh boş ola bilməz!';
                 return;
             }
             
             const commentData = {
                 userId: currentUser.uid,
+                userName: currentUser.displayName,
                 userEmail: currentUser.email,
-                userName: currentUser.displayName || currentUser.email.split('@')[0],
                 userAvatar: "https://res.cloudinary.com/doff3lvyz/image/upload/v1747910426/oyunalislarilogo_bi0ehj.jpg",
                 game: selectedGame,
                 text: commentText,
                 timestamp: Date.now()
             };
             
-            // Firebase'e şərh əlavə et
-            database.ref('comments').push(commentData)
-                .then(() => {
-                    alert("Şərhiniz uğurla göndərildi!");
-                    closeCommentModal();
-                })
-                .catch((error) => {
-                    alert("Şərh göndərilərkən xəta baş verdi: " + error.message);
-                });
+            try {
+                await database.ref('comments').push(commentData);
+                alert("Şərhiniz uğurla göndərildi!");
+                closeCommentModal();
+            } catch (error) {
+                errorElement.textContent = 'Şərh göndərilərkən xəta baş verdi';
+                console.error("Şərh xətası:", error);
+            }
         }
-        
-        // Auth modal fonksiyonları (önceki koddaki gibi)
     </script>
 </body>
 </html>
