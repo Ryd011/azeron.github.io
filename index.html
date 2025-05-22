@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sərfəli və Güvənli Alış</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Orbitron', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        body {
+            background-image: url('https://res.cloudinary.com/doff3lvyz/image/upload/v1747849523/retro-futuristic-80s-background-free-vector_l4bmq3.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .main-title {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 50px;
+            text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
+            animation: neonGlow 1.5s ease-in-out infinite alternate;
+            letter-spacing: 3px;
+        }
+        
+        @keyframes neonGlow {
+            from {
+                text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
+            }
+            to {
+                text-shadow: 0 0 15px #00ff00, 0 0 25px #00ff00, 0 0 35px #00ff00, 0 0 45px #00ff00;
+            }
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .game-card {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+        }
+        
+        .game-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.8);
+        }
+        
+        .game-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .whatsapp-section {
+            text-align: center;
+            padding: 30px 0;
+            background: rgba(0, 0, 0, 0.8);
+            width: 100%;
+            margin-top: auto;
+        }
+        
+        .whatsapp-text {
+            color: #00ff00;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 0 0 5px #00ff00;
+        }
+        
+        .whatsapp-button {
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+        
+        .whatsapp-button:hover {
+            transform: scale(1.1);
+        }
+        
+        .whatsapp-button img {
+            height: 60px;
+            filter: drop-shadow(0 0 5px #00ff00);
+        }
+        
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
+            }
+            
+            .games-grid {
+                grid-template-columns: 1fr;
+                max-width: 300px;
+            }
+            
+            .whatsapp-text {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="main-title">Sərfəli və Güvənli Alış</h1>
+        
+        <div class="games-grid">
+            <div class="game-card">
+                <img src="https://res.cloudinary.com/doff3lvyz/image/upload/v1747905295/pubgm_hz8pge.jpg" alt="PUBG Mobile">
+            </div>
+            <div class="game-card">
+                <img src="https://res.cloudinary.com/doff3lvyz/image/upload/v1747905294/ff_t0nosj.jpg" alt="Free Fire">
+            </div>
+            <div class="game-card">
+                <img src="https://res.cloudinary.com/doff3lvyz/image/upload/v1747905296/bs_fpcnid.jpg" alt="Brawl Stars">
+            </div>
+            <div class="game-card">
+                <img src="https://res.cloudinary.com/doff3lvyz/image/upload/v1747905294/rb_bgcdqi.jpg" alt="Roblox">
+            </div>
+        </div>
+    </div>
+    
+    <div class="whatsapp-section">
+        <div class="whatsapp-text">Whatsapp Nömrəmiz</div>
+        <a href="https://wa.me/994514052026" class="whatsapp-button">
+            <img src="https://res.cloudinary.com/doff3lvyz/image/upload/v1747905291/wp_jbepn7.png" alt="Whatsapp">
+        </a>
+    </div>
+</body>
+</html>
