@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AzeRon - Oyun Alış Platforması</title>
+    <title>AzeRon - Oyun Şərh Platforması</title>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
@@ -112,7 +112,7 @@
         /* Games Grid */
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 2rem;
             margin-bottom: 3rem;
         }
@@ -133,13 +133,16 @@
         
         .game-card img {
             width: 100%;
-            height: 150px;
-            object-fit: cover;
+            height: auto;
+            max-height: 400px;
+            object-fit: contain;
+            background: #000;
         }
         
         .game-card h3 {
             padding: 1rem;
             text-align: center;
+            background: rgba(0, 0, 0, 0.7);
         }
         
         /* Modals */
@@ -162,7 +165,7 @@
             border: 2px solid var(--primary);
             border-radius: 10px;
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
             padding: 2rem;
             position: relative;
             max-height: 90vh;
@@ -243,6 +246,7 @@
             margin-top: 1rem;
             max-height: 300px;
             overflow-y: auto;
+            padding-right: 10px;
         }
         
         .comment {
@@ -260,8 +264,8 @@
         }
         
         .comment-avatar {
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             margin-right: 10px;
             object-fit: cover;
@@ -325,6 +329,10 @@
             
             .modal-content {
                 padding: 1.5rem;
+            }
+            
+            .game-card img {
+                max-height: 300px;
             }
         }
     </style>
@@ -459,11 +467,12 @@
         // Firebase konfiqurasiyası
         const firebaseConfig = {
             apiKey: "AIzaSyD_9RS3tRz8m5JFcg-UZad7AKmgwPC_c50",
-            authDomain: "oyunalislari.firebaseapp.com",
-            projectId: "oyunalislari",
-            storageBucket: "oyunalislari.firebasestorage.app",
-            messagingSenderId: "900191949837",
-            appId: "1:900191949837:web:3075b02b328ffa3daaf144",
+            authDomain: "serhsistem.firebaseapp.com",
+            databaseURL: "https://serhsistem-default-rtdb.firebaseio.com",
+            projectId: "serhsistem",
+            storageBucket: "serhsistem.appspot.com",
+            messagingSenderId: "850339411561",
+            appId: "1:850339411561:web:3075b02b328ffa3daaf144",
             measurementId: "G-E6BZKQ5N0Z"
         };
 
@@ -522,7 +531,7 @@
             if (currentUser) {
                 authButtonContainer.innerHTML = `
                     <div class="user-profile">
-                        <img src="https://res.cloudinary.com/doff3lvyz/image/upload/v1747922366/file_00000000d09c61fd928a84e80f5e6871_qaz1ti.png" 
+                        <img src="${currentUser.photoURL || 'https://res.cloudinary.com/doff3lvyz/image/upload/v1747922366/file_00000000d09c61fd928a84e80f5e6871_qaz1ti.png'}" 
                              class="user-avatar" 
                              alt="${currentUser.displayName}">
                         <span>${currentUser.displayName}</span>
@@ -589,7 +598,8 @@
                 await database.ref('users/' + userCredential.user.uid).set({
                     username: name,
                     email: email,
-                    profile_picture: "https://res.cloudinary.com/doff3lvyz/image/upload/v1747922366/file_00000000d09c61fd928a84e80f5e6871_qaz1ti.png"
+                    profile_picture: "https://res.cloudinary.com/doff3lvyz/image/upload/v1747922366/file_00000000d09c61fd928a84e80f5e6871_qaz1ti.png",
+                    createdAt: firebase.database.ServerValue.TIMESTAMP
                 });
                 
                 authModal.style.display = 'none';
@@ -622,19 +632,18 @@
         function loadComments(gameName) {
             commentsList.innerHTML = '<p>Şərhlər yüklənir...</p>';
             
-            database.ref('comments').orderByChild('game').equalTo(gameName).once('value')
-                .then(snapshot => {
-                    if (!snapshot.exists()) {
-                        commentsList.innerHTML = '<p>İlk şərhçi siz olun!</p>';
-                        return;
-                    }
-                    
-                    commentsList.innerHTML = '';
-                    snapshot.forEach(childSnapshot => {
-                        const comment = childSnapshot.val();
-                        displayComment(comment);
-                    });
+            database.ref('comments').orderByChild('game').equalTo(gameName).on('value', (snapshot) => {
+                if (!snapshot.exists()) {
+                    commentsList.innerHTML = '<p>İlk şərhçi siz olun!</p>';
+                    return;
+                }
+                
+                commentsList.innerHTML = '';
+                snapshot.forEach(childSnapshot => {
+                    const comment = childSnapshot.val();
+                    displayComment(comment);
                 });
+            });
         }
         
         // Şərh göstər
@@ -687,7 +696,6 @@
                 await database.ref('comments').push(commentData);
                 document.getElementById('commentText').value = '';
                 errorElement.textContent = '';
-                displayComment(commentData);
             } catch (error) {
                 errorElement.textContent = 'Şərh göndərilərkən xəta baş verdi';
                 console.error(error);
