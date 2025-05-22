@@ -7,6 +7,7 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
         
@@ -29,10 +30,48 @@
             min-height: 100vh;
         }
         
-        /* Diğer CSS kuralları... (önceki stil kodlarınızı buraya ekleyin) */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+        }
         
-        /* Auth Modal Stilleri */
-        .auth-modal {
+        .login-btn {
+            background: #00ff00;
+            color: black;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .login-btn:hover {
+            background: #00cc00;
+            transform: scale(1.05);
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #00ff00;
+        }
+        
+        /* Diğer stiller... */
+        
+        /* Şərh modalı */
+        .comment-modal {
             display: none;
             position: fixed;
             top: 0;
@@ -45,53 +84,28 @@
             align-items: center;
         }
         
-        .auth-container {
+        .comment-container {
             background: rgba(0, 20, 30, 0.9);
             padding: 30px;
             border-radius: 10px;
             border: 2px solid #00ff00;
             width: 90%;
-            max-width: 400px;
+            max-width: 500px;
         }
         
-        .auth-tabs {
-            display: flex;
-            margin-bottom: 20px;
-        }
-        
-        .auth-tab {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            cursor: pointer;
-            background: rgba(0, 50, 70, 0.7);
-            border-bottom: 3px solid transparent;
-        }
-        
-        .auth-tab.active {
-            border-bottom: 3px solid #00ff00;
-            font-weight: bold;
-        }
-        
-        .auth-form {
-            display: none;
-        }
-        
-        .auth-form.active {
-            display: block;
-        }
-        
-        .auth-input {
+        .comment-textarea {
             width: 100%;
+            height: 150px;
             padding: 12px;
             margin-bottom: 15px;
             background: rgba(0, 0, 0, 0.5);
             border: 1px solid #00ff00;
             color: white;
             border-radius: 5px;
+            resize: none;
         }
         
-        .auth-button {
+        .comment-submit {
             width: 100%;
             padding: 12px;
             background: #00aa00;
@@ -103,56 +117,34 @@
             transition: background 0.3s;
         }
         
-        .auth-button:hover {
+        .comment-submit:hover {
             background: #00ff00;
-        }
-        
-        .auth-switch {
-            color: #00aaff;
-            text-align: center;
-            margin-top: 15px;
-            cursor: pointer;
-        }
-        
-        .auth-error {
-            color: #ff5555;
-            margin-top: 10px;
-            text-align: center;
         }
     </style>
 </head>
 <body>
-    <!-- Önceki HTML içeriğiniz... -->
-    
-    <!-- Auth Modal -->
-    <div class="auth-modal" id="authModal">
-        <div class="auth-container">
-            <div class="auth-tabs">
-                <div class="auth-tab active" onclick="switchAuthTab('login')">Daxil ol</div>
-                <div class="auth-tab" onclick="switchAuthTab('register')">Qeydiyyat</div>
-            </div>
-            
-            <!-- Giriş Formu -->
-            <div class="auth-form active" id="loginForm">
-                <input type="email" class="auth-input" id="loginEmail" placeholder="Email">
-                <input type="password" class="auth-input" id="loginPassword" placeholder="Şifrə">
-                <button class="auth-button" onclick="loginUser()">Daxil ol</button>
-                <div class="auth-switch" onclick="switchAuthTab('register')">Hesabınız yoxdur? Qeydiyyatdan keçin!</div>
-                <div class="auth-error" id="loginError"></div>
-            </div>
-            
-            <!-- Kayıt Formu -->
-            <div class="auth-form" id="registerForm">
-                <input type="email" class="auth-input" id="registerEmail" placeholder="Email">
-                <input type="password" class="auth-input" id="registerPassword" placeholder="Şifrə">
-                <input type="password" class="auth-input" id="registerPasswordConfirm" placeholder="Şifrə təsdiqi">
-                <button class="auth-button" onclick="registerUser()">Qeydiyyat</button>
-                <div class="auth-switch" onclick="switchAuthTab('login')">Artıq hesabınız var? Daxil olun!</div>
-                <div class="auth-error" id="registerError"></div>
-            </div>
+    <div class="header">
+        <div class="logo">
+            <img src="https://res.cloudinary.com/doff3lvyz/image/upload/v1747910426/oyunalislarilogo_bi0ehj.jpg" alt="Oyun Alışları" height="50">
+        </div>
+        <div id="authButtonContainer">
+            <button class="login-btn" onclick="openAuthModal()">Giriş et</button>
         </div>
     </div>
-
+    
+    <!-- Ana içerik... -->
+    
+    <!-- Şərh Modalı -->
+    <div class="comment-modal" id="commentModal">
+        <div class="comment-container">
+            <h3>Şərh yaz</h3>
+            <textarea class="comment-textarea" id="commentText" placeholder="Şərhinizi yazın..."></textarea>
+            <button class="comment-submit" onclick="submitComment()">Göndər</button>
+        </div>
+    </div>
+    
+    <!-- Auth Modal (önceki koddaki gibi) -->
+    
     <script>
         // Firebase konfigürasyonu
         const firebaseConfig = {
@@ -168,91 +160,96 @@
         // Firebase'i başlat
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-
-        // Auth Modal Fonksiyonları
-        function openAuthModal() {
-            document.getElementById('authModal').style.display = 'flex';
-        }
-
-        function closeAuthModal() {
-            document.getElementById('authModal').style.display = 'none';
-        }
-
-        function switchAuthTab(tab) {
-            if(tab === 'login') {
-                document.querySelectorAll('.auth-tab')[0].classList.add('active');
-                document.querySelectorAll('.auth-tab')[1].classList.remove('active');
-                document.getElementById('loginForm').classList.add('active');
-                document.getElementById('registerForm').classList.remove('active');
-            } else {
-                document.querySelectorAll('.auth-tab')[0].classList.remove('active');
-                document.querySelectorAll('.auth-tab')[1].classList.add('active');
-                document.getElementById('loginForm').classList.remove('active');
-                document.getElementById('registerForm').classList.add('active');
-            }
-        }
-
-        // Kullanıcı Kayıt Fonksiyonu
-        function registerUser() {
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('registerPasswordConfirm').value;
-            const errorElement = document.getElementById('registerError');
-
-            errorElement.textContent = '';
-
-            if(password !== confirmPassword) {
-                errorElement.textContent = 'Şifrələr uyğun gəlmir!';
-                return;
-            }
-
-            auth.createUserWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // Kayıt başarılı
-                    alert('Qeydiyyat uğurla tamamlandı!');
-                    closeAuthModal();
-                })
-                .catch((error) => {
-                    errorElement.textContent = error.message;
-                });
-        }
-
-        // Kullanıcı Giriş Fonksiyonu
-        function loginUser() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const errorElement = document.getElementById('loginError');
-
-            errorElement.textContent = '';
-
-            auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // Giriş başarılı
-                    alert('Uğurla daxil oldunuz!');
-                    closeAuthModal();
-                })
-                .catch((error) => {
-                    errorElement.textContent = error.message;
-                });
-        }
-
-        // Kullanıcı durumunu izleme
+        const database = firebase.database();
+        
+        // Kullanıcı durumu
+        let currentUser = null;
+        let selectedGame = null;
+        
+        // Auth durum değişikliklerini izle
         auth.onAuthStateChanged((user) => {
-            if (user) {
-                // Kullanıcı giriş yaptı
-                console.log("Giriş yapan kullanıcı:", user.email);
-            } else {
-                // Kullanıcı çıkış yaptı
-                console.log("Kullanıcı giriş yapmadı");
-            }
+            currentUser = user;
+            updateAuthUI();
         });
-
-        // Fotoğraflara tıklama olayını ekleme
+        
+        // Auth UI güncelleme
+        function updateAuthUI() {
+            const authButtonContainer = document.getElementById('authButtonContainer');
+            
+            if (currentUser) {
+                authButtonContainer.innerHTML = `
+                    <div class="user-profile">
+                        <img src="https://res.cloudinary.com/doff3lvyz/image/upload/v1747910426/oyunalislarilogo_bi0ehj.jpg" class="user-avatar" alt="Profil">
+                        <span>${currentUser.displayName || currentUser.email}</span>
+                        <button class="login-btn" onclick="logout()">Çıxış</button>
+                    </div>
+                `;
+            } else {
+                authButtonContainer.innerHTML = '<button class="login-btn" onclick="openAuthModal()">Giriş et</button>';
+            }
+        }
+        
+        // Çıkış fonksiyonu
+        function logout() {
+            auth.signOut();
+        }
+        
+        // Oyun kartlarına tıklama
         document.querySelectorAll('.game-card').forEach(card => {
             card.addEventListener('click', function() {
-                openAuthModal();
+                if (!currentUser) {
+                    openAuthModal();
+                    alert("Şərh yazmaq üçün giriş etməlisiniz!");
+                    return;
+                }
+                
+                selectedGame = this.querySelector('img').alt;
+                openCommentModal();
             });
         });
+        
+        // Şərh modalını aç
+        function openCommentModal() {
+            document.getElementById('commentModal').style.display = 'flex';
+        }
+        
+        // Şərh modalını kapat
+        function closeCommentModal() {
+            document.getElementById('commentModal').style.display = 'none';
+            document.getElementById('commentText').value = '';
+        }
+        
+        // Şərh göndər
+        function submitComment() {
+            const commentText = document.getElementById('commentText').value.trim();
+            
+            if (!commentText) {
+                alert("Şərh boş ola bilməz!");
+                return;
+            }
+            
+            const commentData = {
+                userId: currentUser.uid,
+                userEmail: currentUser.email,
+                userName: currentUser.displayName || currentUser.email.split('@')[0],
+                userAvatar: "https://res.cloudinary.com/doff3lvyz/image/upload/v1747910426/oyunalislarilogo_bi0ehj.jpg",
+                game: selectedGame,
+                text: commentText,
+                timestamp: Date.now()
+            };
+            
+            // Firebase'e şərh əlavə et
+            database.ref('comments').push(commentData)
+                .then(() => {
+                    alert("Şərhiniz uğurla göndərildi!");
+                    closeCommentModal();
+                })
+                .catch((error) => {
+                    alert("Şərh göndərilərkən xəta baş verdi: " + error.message);
+                });
+        }
+        
+        // Auth modal fonksiyonları (önceki koddaki gibi)
     </script>
 </body>
 </html>
